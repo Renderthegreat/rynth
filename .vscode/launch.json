@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"configurations": [
+		{
+			"type": "node-terminal",
+			"l": "Build",
+			"request": "launch",
+			"command": "npm run build",
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "node",
+			"name": "Test",
+			"request": "launch",
+			"depends
+			"program": "dist/index.js",
+			"cwd": "${workspaceFolder}"
+		},
+	],
+}

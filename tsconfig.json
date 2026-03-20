@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"jsx": "react-jsx",
+		"jsxImportSource": "rynth",
+
+		"rootDir": "src",
+		"module": "esnext",
+        "moduleResolution": "bundler",
+		"baseUrl": ".",
+		"paths": {
+			"#~/*": [
+				"src/*.js"
+			]
+		},
+
+		"resolveJsonModule": true,
+
+		"outDir": "dist",
+
+		"strict": true,
+		"strictNullChecks": true,
+		"skipLibCheck": true,
+	}
+}
