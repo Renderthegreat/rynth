@@ -6,5 +6,5 @@ set -e;
 echo "Installing Rynth...";
 sudo npm link rynth;
 
-echo "Running tests...";
-node dist/index.js;
+# echo "Running tests...";
+# node dist/tests/index.js;

@@ -1,9 +1,9 @@
-import { Item, } from '#~/item';
+import { Component, } from '#~/component';
 import { Signal, } from '#~/signal';
 
-export function hook(root: Item, callback: (item: Item, signal?: Signal<any>) => void): void {
+export function hook(root: Component, callback: (component: Component, signal?: Signal<unknown>) => void): void {
 	for (const child of root.config.children) {
-		if (child instanceof Item) {
+		if (child instanceof Component) {
 			hook(child, callback);
 			continue;
 		};

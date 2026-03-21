@@ -4,14 +4,22 @@
 		"jsx": "react-jsx",
 		"jsxImportSource": "rynth",
 
-		"rootDir": "src",
 		"module": "esnext",
         "moduleResolution": "bundler",
+
 		"baseUrl": ".",
+		"rootDirs": [
+			"src",
+			"tests",
+		],
+		"rootDir": ".",
 		"paths": {
 			"#~/*": [
-				"src/*.js"
-			]
+				"./src/*.js",
+			],
+			"rynth/*": [
+				"./src/*",
+			],
 		},
 
 		"resolveJsonModule": true,
@@ -21,5 +29,5 @@
 		"strict": true,
 		"strictNullChecks": true,
 		"skipLibCheck": true,
-	}
+	},
 }

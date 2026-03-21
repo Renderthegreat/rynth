@@ -19,3 +19,8 @@ export class Signal<T> {
 		this.listener(value);
 	};
 };
+
+/**
+ * `T` or `Signal<T>`.
+ */
+export type Value<T> = T | Signal<T>;

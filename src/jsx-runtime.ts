@@ -1,46 +1,57 @@
-import { Item, ItemFactory } from '#~/item';
+import { Component, ComponentFactory, Child, Config, } from '#~/component';
 
-type Config = {
-	children: (Item | string)[],
-	[key: string]: any,
-};
+import { Class } from 'type-fest';
 
-export class Fragment implements ItemFactory {
+export class Fragment implements ComponentFactory<{}> {
 	public readonly symbol: symbol = Symbol('');
 
-	public of(config: Config): Item {
-		return new Item(this.symbol, config);
+	public of(config: Config<{}>): Component<{}> {
+		return new Component(this.symbol, config);
 	};
 };
 
-export function jsx(type: ItemFactory, config: Config): Item {
-	return (new (type as any)()).of(
-		config,
-	);
+export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<Config<C>, 'children'> & { children: Child | Array<Child> }): Component<C> {
+	const children: Array<Child> = (config.children instanceof Array ? config.children : [config.children])!;
+
+	console.log(config, children);
+
+	return (new type()).of({
+		...(config as Config<C>),
+		children: children,
+	});
 };
 
-export function jsxs(type: ItemFactory, config: Config): Item {
-	let children: Item[] = [];
+export function jsxs<C>(type: Class<ComponentFactory<C>>, config: Config<C>): Component<C> {
+	let children: Array<any> = [];
 
 	for (const child of config.children) {
-		if (child instanceof Item) {
+		if (child instanceof Component) {
 			children.push(child);
 			continue;
 		};
 
-		children.push(jsx(Fragment as unknown as ItemFactory, { children: [child], })); // Cast to `unknown` should not be required here.
+		children.push(jsx(Fragment, { children: [child], }));
 	};
 
-	return (new (type as any)()).of({
+	return (new type()).of({
 		...config,
-		children,
+		children: children as any,
 	});
 };
 
 export namespace JSX {
-	export type Element = Item;
-	
+	export type Element = Component;
+
 	export interface IntrinsicElements {
-		// [key: string]: any,
+		// [key: string]: any;
 	};
+
+	// When a JSX element uses a class/constructor as the tag, infer the
+	// attribute type from `ComponentFactory<C>` by extracting `C` and
+	// returning `Config<C>` so attributes are checked against the
+	// component's config shape (including `children`).
+	export type LibraryManagedAttributes<ComponentType, Props> =
+		ComponentType extends new (...args: any[]) => ComponentFactory<infer C>
+			? (Partial<Omit<Config<C>, 'children'>> & { children?: Child | Array<Child> })
+			: Props;
 };

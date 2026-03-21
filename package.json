@@ -9,7 +9,7 @@
 		"./jsx-runtime": "./dist/jsx-runtime.js"
 	},
 	"imports": {
-		"#~/*": "./dist/*.js"
+		"#~/*": "./dist/src/*.js"
 	},
 	"scripts": {
 		"test": "./scripts/test.sh",
@@ -23,6 +23,10 @@
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.3",
+		"html-inline-script-webpack-plugin": "^3.2.1",
+		"html-webpack-plugin": "^5.6.6",
+		"type-fest": "latest",
+		"typescript": "^5.9.3",
 		"webpack-cli": "^7.0.2"
 	}
 }
