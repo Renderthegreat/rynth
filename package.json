@@ -20,13 +20,17 @@
 	],
 	"author": "Brendan Lucas",
 	"license": "ISC",
+	"dependencies": {
+		"eventemitter3": "latest",
+		"lodash-es": "latest"
+	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.3",
-		"html-inline-script-webpack-plugin": "^3.2.1",
-		"html-webpack-plugin": "^5.6.6",
+		"html-webpack-plugin": "latest",
+		"html-inline-script-webpack-plugin": "latest",
 		"type-fest": "latest",
-		"typescript": "^5.9.3",
-		"webpack-cli": "^7.0.2"
+		"typescript": "latest",
+		"webpack-cli": "latest"
 	}
 }

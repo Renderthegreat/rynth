@@ -1,6 +1,6 @@
 import { Component, ComponentFactory, Child, Config, } from '#~/component';
 
-import { Class } from 'type-fest';
+import { Class, } from 'type-fest';
 
 export class Fragment implements ComponentFactory<{}> {
 	public readonly symbol: symbol = Symbol('');
@@ -13,8 +13,6 @@ export class Fragment implements ComponentFactory<{}> {
 export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<Config<C>, 'children'> & { children: Child | Array<Child> }): Component<C> {
 	const children: Array<Child> = (config.children instanceof Array ? config.children : [config.children])!;
 
-	console.log(config, children);
-
 	return (new type()).of({
 		...(config as Config<C>),
 		children: children,
@@ -22,11 +20,12 @@ export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<Config<C>,
 };
 
 export function jsxs<C>(type: Class<ComponentFactory<C>>, config: Config<C>): Component<C> {
-	let children: Array<any> = [];
+	let children: Array<Component> = [];
 
 	for (const child of config.children) {
 		if (child instanceof Component) {
 			children.push(child);
+
 			continue;
 		};
 
@@ -35,7 +34,7 @@ export function jsxs<C>(type: Class<ComponentFactory<C>>, config: Config<C>): Co
 
 	return (new type()).of({
 		...config,
-		children: children as any,
+		children: children,
 	});
 };
 
@@ -52,6 +51,7 @@ export namespace JSX {
 	// component's config shape (including `children`).
 	export type LibraryManagedAttributes<ComponentType, Props> =
 		ComponentType extends new (...args: any[]) => ComponentFactory<infer C>
-			? (Partial<Omit<Config<C>, 'children'>> & { children?: Child | Array<Child> })
-			: Props;
+			? (Omit<Config<C>, 'children'> & { children?: Child | Array<Child> })
+			: Props
+	;
 };

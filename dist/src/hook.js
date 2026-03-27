@@ -8,24 +8,25 @@ export function hook(root, callback) {
         }
         ;
         if (child instanceof Signal) {
-            child.listener = () => {
+            const unsubscribe = child.subscribe(() => {
                 callback(root, child);
-            };
+            });
+            root.lifecycle.addCleanupTask(unsubscribe);
             continue;
         }
         ;
     }
     ;
     for (const [key, value] of Object.entries(root.config)) {
-        // Not necessary, but to make the code more readable.
         if (key === 'children') {
             continue;
         }
         ;
         if (value instanceof Signal) {
-            value.listener = () => {
+            const unsubscribe = value.subscribe(() => {
                 callback(root, value);
-            };
+            });
+            root.lifecycle.addCleanupTask(unsubscribe);
             continue;
         }
         ;

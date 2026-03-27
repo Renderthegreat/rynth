@@ -9,7 +9,6 @@ export class Fragment {
 ;
 export function jsx(type, config) {
     const children = (config.children instanceof Array ? config.children : [config.children]);
-    console.log(config, children);
     return (new type()).of({
         ...config,
         children: children,

@@ -1,28 +1,43 @@
 import { ComponentFactory, Component, Config, } from '#~/component';
 import { Signal, } from '#~/signal';
 
-import { render, Div, Button, } from '#~/html';
+import { render, Registry, If, Div, Button, } from '#~/html';
 import { hook, } from '#~/hook';
 
 const planet: Signal<string> = new Signal<string>("Earth");
 
 const style: Signal<string> = new Signal<string>("color: green;");
 
+const rickrolled: Signal<boolean> = new Signal<boolean>(false);
+
 const component = <Div>
-	<Div id="foo" style={style}>
+	<Div id='foo' style={style}>
 		Hello, {planet}!
 	</Div>
 	<Button click={() => {
-		window.open('https://rickrolled.com/?slug=47tpdhsh');
-	}}>Click here (not a Rickroll).</Button>
+		console.log("Never gonna give you up...");
+		rickrolled.value = true;
+		window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+	}}>Click here</Button>
+	<If condition={rickrolled}>
+		<Div>
+			Rickrolled!
+		</Div>
+		<Button click={() => {
+			console.log("Never gonna let you down...");
+			rickrolled.value = false;
+		}}>Close</Button>
+	</If>
 </Div>;
 
-const registry: Map<symbol, Node> = new Map();
+const registry: Registry = new Map();
 
 let node: Node = render({ root: component, registry: registry, });
 
 hook(component, (component: Component) => {
-	// console.log('Re-rendering...');
+	// console.log(registry.size);
+
+	// console.log("Re-rendering...");
 	let oldNode: Node = registry.get(component.key)!;
 	let newNode: Node = render({ root: component, registry: registry, });
 

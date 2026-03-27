@@ -5,7 +5,7 @@
 		"jsxImportSource": "rynth",
 
 		"module": "esnext",
-        "moduleResolution": "bundler",
+		"moduleResolution": "bundler",
 
 		"baseUrl": ".",
 		"rootDirs": [

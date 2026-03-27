@@ -6,19 +6,19 @@ import path from 'node:path';
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 export default {
-    entry: {
+	entry: {
 		main: './dist/src/index.js',
 		
 		hello: './dist/tests/hello.js',
 	},
-    output: {
-        path: path.resolve(__dirname, 'dist'),
+	output: {
+		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].bundle.js',
-    },
-	 
+	},
+	
 	mode: 'development',
 	optimization: {
-		 minimize: false
+		minimize: false
 	},
 	devtool: 'source-map',
 
@@ -29,13 +29,13 @@ export default {
 	},
 
 	plugins: [
-		new HTMLWebpackPlugin({
+		/*new HTMLWebpackPlugin({
 			title: 'Hello, Rynth!',
 
 			// template: './tests/hello.html',
 			filename: 'hello.html',
 			chunks: ['hello'],
 		}),
-		new HTMLInlineScriptPlugin(),
+		new HTMLInlineScriptPlugin(),*/
 	],
 };
