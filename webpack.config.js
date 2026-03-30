@@ -9,7 +9,7 @@ export default {
 	entry: {
 		main: './dist/src/index.js',
 		
-		hello: './dist/tests/hello.js',
+		hello: './dist/tests/hello/index.js',
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),

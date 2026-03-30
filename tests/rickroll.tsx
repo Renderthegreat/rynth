@@ -1,7 +1,7 @@
-import { ComponentFactory, Component, Config, } from '#~/component';
+/*import { ComponentFactory, Component, Config, } from '#~/component';
 import { Signal, } from '#~/signal';
 
-import { render, Registry, If, Div, Button, } from '#~/html';
+import { render, Registry, If, Div, Button, } from '#~/web/elements';
 import { hook, } from '#~/hook';
 
 const planet: Signal<string> = new Signal<string>("Earth");
@@ -16,15 +16,16 @@ const component = <Div>
 	</Div>
 	<Button click={() => {
 		console.log("Never gonna give you up...");
+
 		rickrolled.value = true;
-		window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+
+		// window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 	}}>Click here</Button>
 	<If condition={rickrolled}>
 		<Div>
 			Rickrolled!
 		</Div>
 		<Button click={() => {
-			console.log("Never gonna let you down...");
 			rickrolled.value = false;
 		}}>Close</Button>
 	</If>
@@ -35,13 +36,13 @@ const registry: Registry = new Map();
 let node: Node = render({ root: component, registry: registry, });
 
 hook(component, (component: Component) => {
-	// console.log(registry.size);
+	console.log(component);
 
 	// console.log("Re-rendering...");
 	let oldNode: Node = registry.get(component.key)!;
 	let newNode: Node = render({ root: component, registry: registry, });
 
-	// TODO: Ensure `oldNode` is a `ChildNode`.
+	// TODO: Ensure every `oldNode` is a `ChildNode`.
 	(oldNode as ChildNode).replaceWith(newNode);
 });
 
@@ -50,4 +51,4 @@ setInterval(() => {
 	style.value = style.value === "color: red;" ? "color: green;" : "color: red;";
 }, 1000);
 
-window.document.body.appendChild(node);
+window.document.body.appendChild(node);*/

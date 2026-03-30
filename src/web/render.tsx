@@ -1,8 +1,6 @@
-import { cloneDeep, } from 'lodash-es';
+import { Component, Child, } from '#~/component';
 
-import { Component, ComponentFactory, Child, Config, } from '#~/component';
-
-import { Signal, Value, } from '#~/signal';
+import { Signal, } from '#~/signal';
 
 export type Registry = Map<symbol, Node>;
 
@@ -110,6 +108,7 @@ export function render({ root, registry, }: { root: Component, registry: Registr
 			const childNode = resolveChild({ child, registry, root, });
 			if (childNode) {
 				fragment.appendChild(childNode);
+
 				if (!firstNode) {
 					firstNode = childNode;
 				}; // Track the first one for the registry.
@@ -121,6 +120,7 @@ export function render({ root, registry, }: { root: Component, registry: Registr
 		};
 
 		// HACK(+): If there's only 1 child, just return it directly to avoid the Fragment wrapper.
+		// TODO: Check if this causes any issues.
 		return root.config.children.length === 1 && firstNode ? firstNode : fragment;
 	};
 
@@ -178,123 +178,4 @@ export function render({ root, registry, }: { root: Component, registry: Registr
 	root.lifecycle.emit('mount', { node, });
 
 	return node;
-};
-
-
-export type BridgeAttributes = { id?: string; func: (parent: Node) => void; };
-/**
- * This {@link Component} type acts as a bridge between the `JSX` runtime and the `DOM`.
- */
-export class Bridge implements ComponentFactory<BridgeAttributes> {
-	public readonly symbol: symbol = Symbol('Bridge');
-
-	public of(config: Config<BridgeAttributes>): Component<BridgeAttributes> {
-		const uuid: string = crypto.randomUUID(); // These should never realistically conflict.
-		config.id = uuid;
-
-		const component: Component<BridgeAttributes> = new Component(this.symbol, config);
-		component.lifecycle.once('mount', ({ node, }: { node: Node; }) => {
-			console.log('`Bridge` mounted...')
-
-			// Prefer the immediate parent element where this bridge was mounted.
-			// Fallback to `getRootNode()` if parent is unavailable.
-			const parent = (node.parentNode ?? node.getRootNode()) as Node;
-
-				// Debug: indicate the bridge mounted and show parent info.
-				try {
-					console.debug('Bridge mounted for', config, 'parent:', (parent as any)?.nodeName || parent);
-				} catch (e) {
-					console.debug('Bridge mounted');
-				};
-
-				config.func(parent);
-		});
-
-		return component;
-	};
-};
-
-export type CommonAttributes = {
-	id?: string;
-	style?: Value<string>;
-};
-
-export type IfAttributes = {
-	condition: Signal<boolean>;
-};
-export class If implements ComponentFactory<IfAttributes> {
-	public readonly symbol: symbol = Symbol('If');
-
-	public of(config: Config<IfAttributes>): Component<any> {
-		const conditionSignal: Signal<boolean> = config.condition;
-		const componentSignal: Signal<Component | null> = new Signal<Component | null>(null);
-
-		// Ensure we don't destroy the real `config` on unmount.
-		const getNewConfig: () => Config<IfAttributes> = () => {
-			return cloneDeep(config);
-		};
-
-		const wrapper = new Component(this.symbol, {
-			children: [componentSignal],
-		});
-
-		// Subscribe to the condition signal and update the inner component.
-		const unsubscribe = conditionSignal.subscribe((value: boolean) => {
-			console.debug('If condition changed:', value);
-
-			if (value) {
-				componentSignal.value = new Component(this.symbol, getNewConfig());
-			} else {
-				console.log("Unmounting...");
-
-				componentSignal.value?.lifecycle.emit('unmount');
-				componentSignal.value = null;
-			};
-		});
-
-		wrapper.lifecycle.addCleanupTask(unsubscribe);
-
-		// Initialize based on current value.
-		if (conditionSignal.value) {
-			componentSignal.value = new Component(this.symbol, getNewConfig());
-		};
-
-		return wrapper;
-	};
-};
-
-export type DivAttributes = {} & CommonAttributes;
-export class Div implements ComponentFactory<DivAttributes> {
-	public readonly symbol: symbol = Symbol('div');
-
-	public of(config: Config<DivAttributes>): Component<DivAttributes> {
-		return new Component(this.symbol, config);
-	};
-};
-
-export type ButtonAttributes = { click?: () => void; } & CommonAttributes;
-export class Button implements ComponentFactory<ButtonAttributes> {
-	public readonly symbol: symbol = Symbol('button');
-
-	public of(config: Config<ButtonAttributes>): Component<ButtonAttributes> {
-		const component = new Component(this.symbol, config);
-
-		const nested: Component = <Bridge func={(parent: Node) => {
-			const button: HTMLButtonElement = parent as HTMLButtonElement;
-
-			// Debug: log when adding click listener for this button.
-			console.debug("Attaching click listener to", (button as any)?.nodeName || button);
-
-			button.addEventListener('click', () => {
-				console.debug("Button clicked — invoking config.click...");
-				config.click?.();
-			});
-		}}></Bridge>
-
-		nested.config.children = config.children;
-
-		component.config.children = [nested];
-
-		return component;
-	};
 };

@@ -1,25 +1,25 @@
-import { Component, ComponentFactory, Child, Config, } from '#~/component';
+import { Component, ComponentFactory, Child, ComponentConfig, } from '#~/component';
 
 import { Class, } from 'type-fest';
 
 export class Fragment implements ComponentFactory<{}> {
 	public readonly symbol: symbol = Symbol('');
 
-	public of(config: Config<{}>): Component<{}> {
+	public of(config: ComponentConfig<{}>): Component<{}> {
 		return new Component(this.symbol, config);
 	};
 };
 
-export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<Config<C>, 'children'> & { children: Child | Array<Child> }): Component<C> {
+export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<ComponentConfig<C>, 'children'> & { children: Child | Array<Child> }): Component<C> {
 	const children: Array<Child> = (config.children instanceof Array ? config.children : [config.children])!;
 
 	return (new type()).of({
-		...(config as Config<C>),
+		...(config as ComponentConfig<C>),
 		children: children,
 	});
 };
 
-export function jsxs<C>(type: Class<ComponentFactory<C>>, config: Config<C>): Component<C> {
+export function jsxs<C>(type: Class<ComponentFactory<C>>, config: ComponentConfig<C>): Component<C> {
 	let children: Array<Component> = [];
 
 	for (const child of config.children) {
@@ -41,17 +41,14 @@ export function jsxs<C>(type: Class<ComponentFactory<C>>, config: Config<C>): Co
 export namespace JSX {
 	export type Element = Component;
 
-	export interface IntrinsicElements {
+	/*export interface IntrinsicElements {
 		// [key: string]: any;
-	};
+	};*/
 
-	// When a JSX element uses a class/constructor as the tag, infer the
-	// attribute type from `ComponentFactory<C>` by extracting `C` and
-	// returning `Config<C>` so attributes are checked against the
-	// component's config shape (including `children`).
-	export type LibraryManagedAttributes<ComponentType, Props> =
-		ComponentType extends new (...args: any[]) => ComponentFactory<infer C>
-			? (Omit<Config<C>, 'children'> & { children?: Child | Array<Child> })
-			: Props
+	export type LibraryManagedAttributes<ComponentType, Props> = // ? `Props` is required, but it isn't used here.
+		ComponentType extends Class<ComponentFactory<infer P>>
+		? P & { children?: Child | Array<Child>; }
+		: never
 	;
 };
+

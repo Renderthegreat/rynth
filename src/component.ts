@@ -1,7 +1,7 @@
 import { Signal, } from '#~/signal';
 import { Lifecycle, } from '#~/lifecycle';
 
-export type Config<T> = {
+export type ComponentConfig<T> = {
 	children: Array<Child>;
 } & Pick<T, Exclude<keyof T, 'children'>>;
 
@@ -14,7 +14,7 @@ export class Component<C = unknown> {
 
 	public constructor(
 		public readonly type: symbol,
-		public readonly config: Config<C>,
+		public readonly config: ComponentConfig<C>,
 	) {
 		// Bind disposal so `this` is preserved and disposal doesn't
 		// get called with an incorrect context.
@@ -41,7 +41,7 @@ export class Component<C = unknown> {
 export type Child = (Component | Signal<any> | string);
 
 export interface ComponentFactory<C> {
-	of(config: Config<C>): Component<C>;
-
-	symbol: symbol;
+	readonly symbol: symbol;
+	
+	of(config: ComponentConfig<C>): Component<C>;
 };

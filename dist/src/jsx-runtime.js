@@ -32,8 +32,4 @@ export function jsxs(type, config) {
     });
 }
 ;
-export var JSX;
-(function (JSX) {
-    ;
-})(JSX || (JSX = {}));
 ;

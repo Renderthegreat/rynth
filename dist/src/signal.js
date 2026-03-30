@@ -15,8 +15,6 @@ export class Signal {
     }
     ;
     notify() {
-        // Debug: log notifications (temporary)
-        // console.debug('Signal.notify', this._value);
         for (const listener of this.listeners) {
             try {
                 listener(this._value);
@@ -38,9 +36,30 @@ export class Signal {
         this.notify();
     }
     ;
+    map(func) {
+        const signal = new Signal(func(this.value));
+        const unsubscribe = this.subscribe((value) => {
+            signal.value = func(value);
+        });
+        return signal;
+    }
+    ;
     toString() {
         return String(this.value);
     }
     ;
+    /**
+     * Returns the current value of the signal. If the signal is a
+     * subclass of {@link Signal<T>}, returns the value of the underlying
+     * signal. Otherwise, returns the value itself.
+     */
+    valueOf() {
+        return this.value;
+    }
+    ;
+}
+;
+export function signal(value) {
+    return new Signal(value);
 }
 ;

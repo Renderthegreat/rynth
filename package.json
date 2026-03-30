@@ -9,7 +9,8 @@
 		"./jsx-runtime": "./dist/jsx-runtime.js"
 	},
 	"imports": {
-		"#~/*": "./dist/src/*.js"
+		"#~/*": "./dist/src/*.js",
+		"#tests/*": "./dist/tests/*.js"
 	},
 	"scripts": {
 		"test": "./scripts/test.sh",
@@ -21,14 +22,16 @@
 	"author": "Brendan Lucas",
 	"license": "ISC",
 	"dependencies": {
+		"@types/chroma-js": "^3.1.2",
+		"chroma-js": "^3.2.0",
 		"eventemitter3": "latest",
 		"lodash-es": "latest"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.3",
-		"html-webpack-plugin": "latest",
 		"html-inline-script-webpack-plugin": "latest",
+		"html-webpack-plugin": "latest",
 		"type-fest": "latest",
 		"typescript": "latest",
 		"webpack-cli": "latest"

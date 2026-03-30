@@ -35,9 +35,32 @@ export class Signal<T> {
 		this.notify();
 	};
 
+	public map<O>(func: (value: T) => O): Signal<O> {
+		const signal = new Signal<O>(func(this.value));
+
+		const unsubscribe = this.subscribe((value: T) => {
+			signal.value = func(value);
+		});
+
+		return signal;
+	};
+
 	public toString(): string {
 		return String(this.value);
 	};
+	
+	/**
+	 * Returns the current value of the signal. If the signal is a
+	 * subclass of {@link Signal<T>}, returns the value of the underlying
+	 * signal. Otherwise, returns the value itself.
+	 */
+	public valueOf(): T {
+		return this.value;
+	};
+};
+
+export function signal<T>(value: T): Signal<T> {
+	return new Signal<T>(value);
 };
 
 /**

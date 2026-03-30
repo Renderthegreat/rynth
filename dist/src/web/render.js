@@ -1,5 +1,3 @@
-import { jsx as _jsx } from "rynth/jsx-runtime";
-import { cloneDeep, } from 'lodash-es';
 import { Component, } from '#~/component';
 import { Signal, } from '#~/signal';
 /**
@@ -113,6 +111,7 @@ export function render({ root, registry, }) {
         }
         ;
         // HACK(+): If there's only 1 child, just return it directly to avoid the Fragment wrapper.
+        // TODO: Check if this causes any issues.
         return root.config.children.length === 1 && firstNode ? firstNode : fragment;
     }
     ;
@@ -136,6 +135,7 @@ export function render({ root, registry, }) {
             else {
                 node.setAttribute(key, String(v));
             }
+            ;
             const unsubscribeAttr = value.subscribe((nv) => {
                 if (nv == null) {
                     node.removeAttribute(key);
@@ -170,98 +170,5 @@ export function render({ root, registry, }) {
     // Fire lifecycle hook.
     root.lifecycle.emit('mount', { node, });
     return node;
-}
-;
-/**
- * This {@link Component} type acts as a bridge between the `JSX` runtime and the `DOM`.
- */
-export class Bridge {
-    symbol = Symbol('Bridge');
-    of(config) {
-        const uuid = crypto.randomUUID(); // These should never realistically conflict.
-        config.id = uuid;
-        const component = new Component(this.symbol, config);
-        component.lifecycle.once('mount', ({ node, }) => {
-            console.log('`Bridge` mounted...');
-            // Prefer the immediate parent element where this bridge was mounted.
-            // Fallback to `getRootNode()` if parent is unavailable.
-            const parent = (node.parentNode ?? node.getRootNode());
-            // Debug: indicate the bridge mounted and show parent info.
-            try {
-                console.debug('Bridge mounted for', config, 'parent:', parent?.nodeName || parent);
-            }
-            catch (e) {
-                console.debug('Bridge mounted');
-            }
-            ;
-            config.func(parent);
-        });
-        return component;
-    }
-    ;
-}
-;
-export class If {
-    symbol = Symbol('If');
-    of(config) {
-        const conditionSignal = config.condition;
-        const componentSignal = new Signal(null);
-        // Ensure we don't destroy the real `config` on unmount.
-        const getNewConfig = () => {
-            return cloneDeep(config);
-        };
-        const wrapper = new Component(this.symbol, {
-            children: [componentSignal],
-        });
-        // Subscribe to the condition signal and update the inner component.
-        const unsubscribe = conditionSignal.subscribe((v) => {
-            console.debug('If condition changed:', v);
-            if (v) {
-                componentSignal.value = new Component(this.symbol, getNewConfig());
-            }
-            else {
-                console.log("Unmounting...");
-                componentSignal.value?.lifecycle.emit('unmount');
-                componentSignal.value = null;
-            }
-            ;
-        });
-        wrapper.lifecycle.addCleanupTask(unsubscribe);
-        // Initialize based on current value.
-        if (conditionSignal.value) {
-            componentSignal.value = new Component(this.symbol, getNewConfig());
-        }
-        ;
-        return wrapper;
-    }
-    ;
-}
-;
-export class Div {
-    symbol = Symbol('div');
-    of(config) {
-        return new Component(this.symbol, config);
-    }
-    ;
-}
-;
-export class Button {
-    symbol = Symbol('button');
-    of(config) {
-        const component = new Component(this.symbol, config);
-        const nested = _jsx(Bridge, { func: (parent) => {
-                const button = parent;
-                // Debug: log when adding click listener for this button.
-                console.debug("Attaching click listener to", button?.nodeName || button);
-                button.addEventListener('click', () => {
-                    console.debug("Button clicked — invoking config.click...");
-                    config.click?.();
-                });
-            } });
-        nested.config.children = config.children;
-        component.config.children = [nested];
-        return component;
-    }
-    ;
 }
 ;
