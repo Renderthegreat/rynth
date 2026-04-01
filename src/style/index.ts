@@ -9,12 +9,31 @@ export class Style {
 
 	public font?: Font;
 
-	public constructor() {
+	public constructor(
+		public readonly createVariable: (value: string) => { value: string, name: string, },
+	) {
 
 	};
 
 	public toCSS(): CSSStyleDeclaration {
 		return toCSS(this);
+	};
+};
+
+export class StyleSheet {
+	public readonly variables: Map<string, string> = new Map();
+
+	public createStyle(): Style {
+		return new Style((value: string) => {
+			const UUID = crypto.randomUUID();
+
+			this.variables.set(UUID, value);
+
+			return {
+				value: `var(--${UUID})`,
+				name: UUID,
+			};
+		});
 	};
 };
 

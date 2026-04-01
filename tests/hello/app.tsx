@@ -1,10 +1,12 @@
 import * as Rynth from '#~/index';
 
-import { Body, Head, Header, Div, Button, If, } from '#~/web/elements';
+import { Body, Head, Header, Div, Button, Canvas, Break, If, } from '#~/web/elements';
 
-import { Style, FillType, } from '#~/style/index';
+import { Style, StyleSheet, FillType, } from '#~/style/index';
 
-import chroma from 'chroma-js';
+import { CommonAttributes } from '#~/web/common';
+
+import Color from 'colorjs.io';
 
 export type Theme = 'light' | 'dark';
 
@@ -12,20 +14,24 @@ const mode = Rynth.signal<Theme>(
 	window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 );
 
-export const app =
+const counter = Rynth.signal(0);
+
+export const app: Rynth.Component<CommonAttributes> = <>
+	<Head>
+		{}
+	</Head>
 	<Body>
 		<Header>
-			My App
+			<>My App</>
 		</Header>
+		Counter is {counter}.
+		<Break/>
+		<Button
+			click={()=>{
+				counter.value++;
+			}}
+		>Click here to increment the counter</Button>
+		<Break/>
+		<Canvas></Canvas>
 	</Body>
-;
-
-const appStyle: Style = new Style();
-
-appStyle.background = {
-	type: FillType.Color,
-
-	...(chroma.oklab(0.1, 0.1, 0.1)),
-};
-
-console.log(appStyle.toCSS());
+</>;

@@ -4,19 +4,15 @@
  * Anyways, good luck! ;)
  */
 import { FillType, } from '#~/style/fill';
-function hex(rgba) {
-    return `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${rgba[3]})`;
-}
-;
 export function toCSS(style) {
     const css = document.createElement('div').style; // This element should be disposed at the end of the function.
     // # Foreground
     if (style.foreground) {
-        switch (style.foreground.type) {
+        switch (style.foreground.kind) {
             case FillType.Color:
                 {
-                    console.log(style.foreground);
-                    css.color = hex(style.foreground._rgb);
+                    css.color = style.createVariable(style.foreground.value.toString()).value;
+                    console.log(css.color);
                     break;
                 }
                 ;
@@ -26,11 +22,11 @@ export function toCSS(style) {
     ;
     // # Background
     if (style.background) {
-        switch (style.background.type) {
+        switch (style.background.kind) {
             case FillType.Color:
                 {
-                    console.log(style.background);
-                    css.backgroundColor = hex(style.background._rgb);
+                    css.backgroundColor = style.createVariable(style.background.value.toString()).value;
+                    console.log(css.backgroundColor);
                     break;
                 }
                 ;
@@ -40,8 +36,8 @@ export function toCSS(style) {
     ;
     // # Font
     if (style.font) {
-        css.fontFamily = style.font.font.family;
-        css.fontSize = `${style.font.size}px`;
+        css.fontFamily = style.createVariable(style.font.font.family).value;
+        css.fontSize = style.createVariable(`${style.font.size}px`).value;
     }
     ;
     return css;

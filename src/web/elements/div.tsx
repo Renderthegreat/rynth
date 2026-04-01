@@ -4,7 +4,7 @@ import { CommonAttributes } from '../common';
 
 export type DivAttributes = {} & CommonAttributes;
 /**
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLDivElement HTMLDivElement}.
+ * {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/div HTMLDivElement}.
  */
 export class Div implements ComponentFactory<DivAttributes> {
 	public readonly symbol: symbol = Symbol('div');

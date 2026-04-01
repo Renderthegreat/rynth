@@ -4,7 +4,7 @@ import { CommonAttributes } from '../common';
 
 export type BodyAttributes = {} & CommonAttributes;
 /**
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLBodyElement HTMLBodyElement}.
+ * {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/body HTMLBodyElement}.
  */
 export class Body implements ComponentFactory<BodyAttributes> {
 	public readonly symbol: symbol = Symbol('body');

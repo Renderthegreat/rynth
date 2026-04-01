@@ -2,9 +2,9 @@ import { Component, ComponentFactory, ComponentConfig, } from '#~/index';
 
 import { CommonAttributes } from '../common';
 
-export type ButtonAttributes = { click?: () => void; } & CommonAttributes;
+export type ButtonAttributes = { click?: () => void, } & CommonAttributes;
 /**
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement HTMLButtonElement}.
+ * {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button HTMLButtonElement}.
  */
 export class Button implements ComponentFactory<ButtonAttributes> {
 	public readonly symbol: symbol = Symbol('button');

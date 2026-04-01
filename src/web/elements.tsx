@@ -7,6 +7,10 @@ export * from '#~/web/elements/header';
 
 export * from '#~/web/elements/div';
 
+export * from '#~/web/elements/canvas';
+
+export * from '#~/web/elements/break';
+
 // # ...
 export * from '#~/web/elements/button';
 

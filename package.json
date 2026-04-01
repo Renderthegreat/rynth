@@ -22,10 +22,9 @@
 	"author": "Brendan Lucas",
 	"license": "ISC",
 	"dependencies": {
-		"@types/chroma-js": "^3.1.2",
-		"chroma-js": "^3.2.0",
 		"eventemitter3": "latest",
-		"lodash-es": "latest"
+		"lodash-es": "latest",
+		"colorjs.io": "latest"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
@@ -35,5 +34,7 @@
 		"type-fest": "latest",
 		"typescript": "latest",
 		"webpack-cli": "latest"
+	
+	
 	}
 }

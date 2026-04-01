@@ -4,7 +4,7 @@ import { CommonAttributes } from '../common';
 
 export type HeadAttributes = {} & CommonAttributes;
 /**
- * {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLHeadElement HTMLHeadElement}.
+ * {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/head HTMLHeadElement}.
  */
 export class Head implements ComponentFactory<HeadAttributes> {
 	public readonly symbol: symbol = Symbol('head');

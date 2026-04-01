@@ -1,5 +1,5 @@
 export class Signal<T> {
-	private _value: T;
+	protected _value: T;
 	private listeners: Array<(value: T) => void> = new Array();
 
 	public constructor(value: T) {
