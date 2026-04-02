@@ -1,5 +1,5 @@
 import { Component, } from '#~/component';
-export class Fragment {
+export class FragmentFactory {
     symbol = Symbol('');
     of(config) {
         return new Component(this.symbol, config);
@@ -23,7 +23,7 @@ export function jsxs(type, config) {
             continue;
         }
         ;
-        children.push(jsx(Fragment, { children: [child], }));
+        children.push(jsx(FragmentFactory, { children: [child], }));
     }
     ;
     return (new type()).of({

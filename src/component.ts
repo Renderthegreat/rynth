@@ -1,9 +1,10 @@
 import { Signal, } from '#~/signal';
 import { Lifecycle, } from '#~/lifecycle';
 
-export type ComponentConfig<T> = {
-	children: Array<Child>;
-} & Pick<T, Exclude<keyof T, 'children'>>;
+// We can't enforce types on this. :(
+export type ComponentConfig<T> = T & {
+	children: Child[],
+};
 
 export class Component<C = unknown> {
 	public readonly key: symbol = Symbol();
@@ -38,7 +39,7 @@ export class Component<C = unknown> {
 	};
 };
 
-export type Child = (Component | Signal<any> | string);
+export type Child<C = any> = (Component<C> | Signal<any> | string);
 
 export interface ComponentFactory<C> {
 	readonly symbol: symbol;

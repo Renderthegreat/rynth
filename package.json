@@ -1,12 +1,16 @@
 {
 	"name": "rynth",
 	"version": "0.0.0",
-	"description": "An intuitive web framework.",
-	"main": "dist/index.js",
+	"description": "An intuitive UI framework.",
+
+	"main": "dist/src/index.js",
+	"types": "dist/src/index.d.ts",
+
 	"type": "module",
+
 	"exports": {
-		".": "./dist/index.js",
-		"./jsx-runtime": "./dist/jsx-runtime.js"
+		".": "./dist/src/index.js",
+		"./jsx-runtime": "./dist/src/jsx-runtime.js"
 	},
 	"imports": {
 		"#~/*": "./dist/src/*.js",
@@ -17,24 +21,22 @@
 		"build": "./scripts/build.sh"
 	},
 	"keywords": [
-		"Rynth"
+		"rynth"
 	],
 	"author": "Brendan Lucas",
 	"license": "ISC",
+
 	"dependencies": {
 		"eventemitter3": "latest",
-		"lodash-es": "latest",
 		"colorjs.io": "latest"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.3",
-		"html-inline-script-webpack-plugin": "latest",
-		"html-webpack-plugin": "latest",
+
+		"webpack-cli": "latest",
+
 		"type-fest": "latest",
-		"typescript": "latest",
-		"webpack-cli": "latest"
-	
-	
+		"typescript": "latest"
 	}
 }

@@ -2,10 +2,10 @@ import { Component, ComponentFactory, Child, ComponentConfig, } from '#~/compone
 
 import { Class, } from 'type-fest';
 
-export class Fragment implements ComponentFactory<{}> {
-	public readonly symbol: symbol = Symbol('');
+export class FragmentFactory<C = any> implements ComponentFactory<C> {
+	public readonly symbol = Symbol('');
 
-	public of(config: ComponentConfig<{}>): Component<{}> {
+	public of(config: ComponentConfig<C>): Component<C> {
 		return new Component(this.symbol, config);
 	};
 };
@@ -29,7 +29,7 @@ export function jsxs<C>(type: Class<ComponentFactory<C>>, config: ComponentConfi
 			continue;
 		};
 
-		children.push(jsx(Fragment, { children: [child], }));
+		children.push(jsx(FragmentFactory, { children: [child], }));
 	};
 
 	return (new type()).of({
