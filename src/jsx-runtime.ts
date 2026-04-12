@@ -10,6 +10,11 @@ export class FragmentFactory<C = any> implements ComponentFactory<C> {
 	};
 };
 
+/**
+ * Don't use this type, it's only for the JSX compiler.
+ */
+export class Fragment extends FragmentFactory { };
+
 export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<ComponentConfig<C>, 'children'> & { children: Child | Array<Child> }): Component<C> {
 	const children: Array<Child> = (config.children instanceof Array ? config.children : [config.children])!;
 

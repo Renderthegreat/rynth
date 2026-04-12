@@ -1,4 +1,4 @@
-import { toCSS, } from "#~/style/toCSS";
+import { toCSS, } from '#~/style/toCSS';
 export class Style {
     createVariable;
     foreground;

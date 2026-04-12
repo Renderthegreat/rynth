@@ -7,6 +7,12 @@ export class FragmentFactory {
     ;
 }
 ;
+/**
+ * Don't use this type, it's only for the JSX compiler.
+ */
+export class Fragment extends FragmentFactory {
+}
+;
 export function jsx(type, config) {
     const children = (config.children instanceof Array ? config.children : [config.children]);
     return (new type()).of({

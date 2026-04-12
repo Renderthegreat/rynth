@@ -2,10 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./node_modules/eventemitter3/index.js"
-/*!*********************************************!*\
-  !*** ./node_modules/eventemitter3/index.js ***!
-  \*********************************************/
+/***/ 792
 (module) {
 
 
@@ -346,30 +343,106 @@ if (true) {
 }
 
 
-/***/ },
+/***/ }
 
-/***/ "./dist/src/component.js"
-/*!*******************************!*\
-  !*** ./dist/src/component.js ***!
-  \*******************************/
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
 
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Component: () => (/* binding */ Component)
-/* harmony export */ });
-/* harmony import */ var _lifecycle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! #~/lifecycle */ "./dist/src/lifecycle.js");
+// UNUSED EXPORTS: Component, Computed, Signal, computed, hook, signal, unwrap
+
+// EXTERNAL MODULE: ../node_modules/eventemitter3/index.js
+var eventemitter3 = __webpack_require__(792);
+;// ../node_modules/eventemitter3/index.mjs
+/* unused harmony import specifier */ var EventEmitter;
+
+
+
+/* harmony default export */ const node_modules_eventemitter3 = ((/* unused pure expression or super */ null && (EventEmitter)));
+
+;// ./dist/src/lifecycle.js
+
+class Lifecycle extends eventemitter3 {
+    methods;
+    cleanupTasks = [];
+    addCleanupTask(task) {
+        this.cleanupTasks.push(task);
+    }
+    ;
+    resumé = [];
+    paused = false;
+    constructor(methods) {
+        super();
+        this.methods = methods;
+        this.on('pause', () => {
+            this.paused = true;
+        });
+        this.on('resume', () => {
+            this.paused = false;
+            this.resumé.forEach(([event, ...args]) => {
+                this.methods[event]?.();
+                this.emit(event, ...args);
+            });
+            this.resumé = [];
+        });
+    }
+    ;
+    emit(event, ...args) {
+        if (this.paused) {
+            this.resumé.push([event, ...args]);
+        }
+        else {
+            this.methods[event]?.();
+            super.emit(event, ...args);
+        }
+        ;
+        return true;
+    }
+    ;
+    cleanup() {
+        this.cleanupTasks.forEach(task => task());
+        this.cleanupTasks = [];
+    }
+    ;
+}
+;
+
+;// ./dist/src/component.js
+/* unused harmony import specifier */ var component_Lifecycle;
 
 class Component {
     type;
     config;
     key = Symbol();
-    lifecycle = new _lifecycle__WEBPACK_IMPORTED_MODULE_0__.Lifecycle({});
+    lifecycle = new component_Lifecycle({});
     constructor(type, config) {
         this.type = type;
         this.config = config;
-        // Bind disposal so `this` is preserved and disposal doesn't
-        // get called with an incorrect context.
+        // Bind disposal so `this` is preserved and disposal doesn't get called with an incorrect context.
         this.lifecycle.on('unmount', () => this.dispose());
     }
     ;
@@ -381,8 +454,7 @@ class Component {
         // Recursively dispose of children
         for (const child of this.config.children) {
             if (child instanceof Component) {
-                // Emit `unmount` on children so their lifecycle handlers
-                // run and cleanup is centralized through the lifecycle.
+                // Emit `'unmount'` on children so their lifecycle handlers run and clean-up is centralized through the lifecycle.
                 child.lifecycle.emit('unmount');
             }
             ;
@@ -394,113 +466,7 @@ class Component {
 ;
 ;
 
-
-/***/ },
-
-/***/ "./dist/src/hook.js"
-/*!**************************!*\
-  !*** ./dist/src/hook.js ***!
-  \**************************/
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   hook: () => (/* binding */ hook)
-/* harmony export */ });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! #~/component */ "./dist/src/component.js");
-/* harmony import */ var _signal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! #~/signal */ "./dist/src/signal.js");
-
-
-function hook(root, callback) {
-    for (const child of root.config.children) {
-        if (child instanceof _component__WEBPACK_IMPORTED_MODULE_0__.Component) {
-            hook(child, callback);
-            continue;
-        }
-        ;
-        if (child instanceof _signal__WEBPACK_IMPORTED_MODULE_1__.Signal) {
-            const unsubscribe = child.subscribe(() => {
-                callback(root, child);
-            });
-            root.lifecycle.addCleanupTask(unsubscribe);
-            continue;
-        }
-        ;
-    }
-    ;
-    for (const [key, value] of Object.entries(root.config)) {
-        if (key === 'children') {
-            continue;
-        }
-        ;
-        if (value instanceof _signal__WEBPACK_IMPORTED_MODULE_1__.Signal) {
-            const unsubscribe = value.subscribe(() => {
-                callback(root, value);
-            });
-            root.lifecycle.addCleanupTask(unsubscribe);
-            continue;
-        }
-        ;
-    }
-    ;
-}
-;
-
-
-/***/ },
-
-/***/ "./dist/src/lifecycle.js"
-/*!*******************************!*\
-  !*** ./dist/src/lifecycle.js ***!
-  \*******************************/
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Lifecycle: () => (/* binding */ Lifecycle)
-/* harmony export */ });
-/* harmony import */ var eventemitter3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! eventemitter3 */ "./node_modules/eventemitter3/index.mjs");
-
-class Lifecycle extends eventemitter3__WEBPACK_IMPORTED_MODULE_0__.EventEmitter {
-    methods;
-    cleanupTasks = [];
-    addCleanupTask(task) {
-        this.cleanupTasks.push(task);
-    }
-    ;
-    cleanup() {
-        this.cleanupTasks.forEach(task => task());
-        this.cleanupTasks = [];
-    }
-    ;
-    constructor(methods) {
-        super();
-        this.methods = methods;
-    }
-    ;
-    emit(event, ...args) {
-        this.methods[event]?.();
-        super.emit(event, ...args);
-        return true;
-    }
-    ;
-}
-;
-
-
-/***/ },
-
-/***/ "./dist/src/signal.js"
-/*!****************************!*\
-  !*** ./dist/src/signal.js ***!
-  \****************************/
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Signal: () => (/* binding */ Signal),
-/* harmony export */   signal: () => (/* binding */ signal)
-/* harmony export */ });
+;// ./dist/src/signal.js
 class Signal {
     _value;
     listeners = new Array();
@@ -508,6 +474,13 @@ class Signal {
         this._value = value;
     }
     ;
+    /**
+     * Subscribe to the signal.
+     *
+     * @param listener - The listener to be called when the signal value changes.
+     *
+     * @returns A function that unsubscribes the listener when called.
+     */
     subscribe(listener) {
         // Debug: log subscription creation (temporary)
         // console.debug('Signal.subscribe', listener);
@@ -552,9 +525,10 @@ class Signal {
     }
     ;
     /**
-     * Returns the current value of the signal. If the signal is a
-     * subclass of {@link Signal<T>}, returns the value of the underlying
-     * signal. Otherwise, returns the value itself.
+     * Returns the current value of the signal.
+     *
+     * This is useful because if the signal is a subclass of {@link Signal<T>}, returns the value of the underlying signal.
+     * Otherwise, returns the value itself (as a primitive).
      */
     valueOf() {
         return this.value;
@@ -566,113 +540,102 @@ function signal(value) {
     return new Signal(value);
 }
 ;
+class Computed extends Signal {
+    parameters;
+    func;
+    constructor(parameters, func) {
+        super(undefined);
+        this.parameters = parameters;
+        this.func = func;
+        super.value = this.compute();
+    }
+    ;
+    get value() {
+        return this.compute();
+    }
+    ;
+    compute() {
+        return super.value = this.func(...this.parameters.map((param) => param.value));
+    }
+    ;
+}
+;
+function computed(parameters, func) {
+    const getParameterValues = () => parameters.map((param) => param.value);
+    const signal = new Signal(func(...getParameterValues()));
+    const unsubscribes = parameters.map((param) => {
+        return param.subscribe(() => {
+            signal.value = func(...getParameterValues());
+        });
+    });
+    return signal;
+}
+;
+/**
+ * Unwraps a value, returning the underlying value if it is a {@link Signal<T>}.
+ * If the value is not a {@link Signal<T>}, returns the value unchanged.
+ *
+ * @param value The value to unwrap.
+ *
+ * @returns {T} The unwrapped value.
+ */
+function unwrap(value) {
+    return value instanceof Signal ? value.value : value;
+}
+;
+
+;// ./dist/src/hook.js
+/* unused harmony import specifier */ var hook_Component;
+/* unused harmony import specifier */ var hook_Signal;
 
 
-/***/ },
+function hook(root, callback) {
+    for (const child of root.config.children) {
+        if (child instanceof hook_Component) {
+            hook(child, callback);
+            continue;
+        }
+        ;
+        if (child instanceof hook_Signal) {
+            const unsubscribe = child.subscribe(() => {
+                callback(root, child);
+            });
+            root.lifecycle.addCleanupTask(unsubscribe);
+            continue;
+        }
+        ;
+        // TODO: Figure this out.
+        /*if (child instanceof Array) {
+            for (const item of child) {
+                if (item instanceof Component) {
+                    hook(item, callback);
+                };
+            };
+        };*/
+    }
+    ;
+    for (const [key, value] of Object.entries(root.config)) {
+        if (key === 'children') {
+            continue;
+        }
+        ;
+        if (value instanceof hook_Signal) {
+            const unsubscribe = value.subscribe(() => {
+                callback(root, value);
+            });
+            root.lifecycle.addCleanupTask(unsubscribe);
+            continue;
+        }
+        ;
+    }
+    ;
+}
+;
 
-/***/ "./node_modules/eventemitter3/index.mjs"
-/*!**********************************************!*\
-  !*** ./node_modules/eventemitter3/index.mjs ***!
-  \**********************************************/
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   EventEmitter: () => (/* reexport default export from named module */ _index_js__WEBPACK_IMPORTED_MODULE_0__),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.js */ "./node_modules/eventemitter3/index.js");
-
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_index_js__WEBPACK_IMPORTED_MODULE_0__);
-
-
-/***/ }
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		if (!(moduleId in __webpack_modules__)) {
-/******/ 			delete __webpack_module_cache__[moduleId];
-/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
-/******/ 			e.code = 'MODULE_NOT_FOUND';
-/******/ 			throw e;
-/******/ 		}
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-(() => {
-/*!***************************!*\
-  !*** ./dist/src/index.js ***!
-  \***************************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Component: () => (/* reexport safe */ _component__WEBPACK_IMPORTED_MODULE_0__.Component),
-/* harmony export */   Signal: () => (/* reexport safe */ _signal__WEBPACK_IMPORTED_MODULE_1__.Signal),
-/* harmony export */   hook: () => (/* reexport safe */ _hook__WEBPACK_IMPORTED_MODULE_2__.hook),
-/* harmony export */   signal: () => (/* reexport safe */ _signal__WEBPACK_IMPORTED_MODULE_1__.signal)
-/* harmony export */ });
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! #~/component */ "./dist/src/component.js");
-/* harmony import */ var _signal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! #~/signal */ "./dist/src/signal.js");
-/* harmony import */ var _hook__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! #~/hook */ "./dist/src/hook.js");
+;// ./dist/src/index.js
 
 
 
-
-})();
 
 /******/ })()
 ;

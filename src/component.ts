@@ -17,8 +17,7 @@ export class Component<C = unknown> {
 		public readonly type: symbol,
 		public readonly config: ComponentConfig<C>,
 	) {
-		// Bind disposal so `this` is preserved and disposal doesn't
-		// get called with an incorrect context.
+		// Bind disposal so `this` is preserved and disposal doesn't get called with an incorrect context.
 		this.lifecycle.on('unmount', () => this.dispose());
 	};
 
@@ -31,15 +30,14 @@ export class Component<C = unknown> {
 		// Recursively dispose of children
 		for (const child of this.config.children) {
 			if (child instanceof Component) {
-				// Emit `unmount` on children so their lifecycle handlers
-				// run and cleanup is centralized through the lifecycle.
+				// Emit `'unmount'` on children so their lifecycle handlers run and clean-up is centralized through the lifecycle.
 				child.lifecycle.emit('unmount');
 			};
 		};
 	};
 };
 
-export type Child<C = any> = (Component<C> | Signal<any> | string);
+export type Child<C = any> = (Component<C> | Signal<any> | string) | null;
 
 export interface ComponentFactory<C> {
 	readonly symbol: symbol;

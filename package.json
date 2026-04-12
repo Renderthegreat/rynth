@@ -28,9 +28,12 @@
 
 	"dependencies": {
 		"eventemitter3": "latest",
+		"clone-deep": "latest",
 		"colorjs.io": "latest"
 	},
 	"devDependencies": {
+		"@types/clone-deep": "latest",
+
 		"babel-cli": "^6.26.0",
 		"babel-core": "^6.26.3",
 

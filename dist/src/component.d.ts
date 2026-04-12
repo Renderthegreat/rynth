@@ -14,7 +14,7 @@ export declare class Component<C = unknown> {
      */
     private dispose;
 }
-export type Child<C = any> = (Component<C> | Signal<any> | string);
+export type Child<C = any> = (Component<C> | Signal<any> | string) | null;
 export interface ComponentFactory<C> {
     readonly symbol: symbol;
     of(config: ComponentConfig<C>): Component<C>;

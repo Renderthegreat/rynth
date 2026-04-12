@@ -1,5 +1,5 @@
-import { Fill } from "#~/style/fill";
-import { Font } from "#~/style/font";
+import { Fill } from '#~/style/fill';
+import { Font } from '#~/style/font';
 export declare class Style {
     readonly createVariable: (value: string) => {
         value: string;

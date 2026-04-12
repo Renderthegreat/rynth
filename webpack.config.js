@@ -11,7 +11,7 @@ export default {
 		filename: '[name].bundle.js',
 	},
 	
-	mode: 'development',
+	mode: 'production',
 	optimization: {
 		minimize: false
 	},

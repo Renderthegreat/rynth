@@ -15,6 +15,14 @@ export function hook(root, callback) {
             continue;
         }
         ;
+        // TODO: Figure this out.
+        /*if (child instanceof Array) {
+            for (const item of child) {
+                if (item instanceof Component) {
+                    hook(item, callback);
+                };
+            };
+        };*/
     }
     ;
     for (const [key, value] of Object.entries(root.config)) {
