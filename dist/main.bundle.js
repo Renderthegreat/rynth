@@ -466,8 +466,56 @@ class Component {
 ;
 ;
 
+;// ./dist/src/hook.js
+/* unused harmony import specifier */ var hook_Component;
+/* unused harmony import specifier */ var Signal;
+
+
+function hook(root, callback) {
+    for (const child of root.config.children) {
+        if (child instanceof hook_Component) {
+            hook(child, callback);
+            continue;
+        }
+        ;
+        if (child instanceof Signal) {
+            const unsubscribe = child.subscribe(() => {
+                callback(root, child);
+            });
+            root.lifecycle.addCleanupTask(unsubscribe);
+            continue;
+        }
+        ;
+        // TODO: Figure this out.
+        /*if (child instanceof Array) {
+            for (const item of child) {
+                if (item instanceof Component) {
+                    hook(item, callback);
+                };
+            };
+        };*/
+    }
+    ;
+    for (const [key, value] of Object.entries(root.config)) {
+        if (key === 'children') {
+            continue;
+        }
+        ;
+        if (value instanceof Signal) {
+            const unsubscribe = value.subscribe(() => {
+                callback(root, value);
+            });
+            root.lifecycle.addCleanupTask(unsubscribe);
+            continue;
+        }
+        ;
+    }
+    ;
+}
+;
+
 ;// ./dist/src/signal.js
-class Signal {
+class signal_Signal {
     _value;
     listeners = new Array();
     constructor(value) {
@@ -482,8 +530,6 @@ class Signal {
      * @returns A function that unsubscribes the listener when called.
      */
     subscribe(listener) {
-        // Debug: log subscription creation (temporary)
-        // console.debug('Signal.subscribe', listener);
         this.listeners.push(listener);
         return () => {
             this.listeners = this.listeners.filter((l) => l !== listener);
@@ -513,7 +559,8 @@ class Signal {
     }
     ;
     map(func) {
-        const signal = new Signal(func(this.value));
+        const signal = new signal_Signal(func(this.value));
+        // TODO:
         const unsubscribe = this.subscribe((value) => {
             signal.value = func(value);
         });
@@ -536,39 +583,14 @@ class Signal {
     ;
 }
 ;
+/**
+ * Creates a new signal.
+ *
+ * @param value The initial value of the {@link Signal}.
+ * @returns {Signal<T>}
+ */
 function signal(value) {
-    return new Signal(value);
-}
-;
-class Computed extends Signal {
-    parameters;
-    func;
-    constructor(parameters, func) {
-        super(undefined);
-        this.parameters = parameters;
-        this.func = func;
-        super.value = this.compute();
-    }
-    ;
-    get value() {
-        return this.compute();
-    }
-    ;
-    compute() {
-        return super.value = this.func(...this.parameters.map((param) => param.value));
-    }
-    ;
-}
-;
-function computed(parameters, func) {
-    const getParameterValues = () => parameters.map((param) => param.value);
-    const signal = new Signal(func(...getParameterValues()));
-    const unsubscribes = parameters.map((param) => {
-        return param.subscribe(() => {
-            signal.value = func(...getParameterValues());
-        });
-    });
-    return signal;
+    return new signal_Signal(value);
 }
 ;
 /**
@@ -580,59 +602,61 @@ function computed(parameters, func) {
  * @returns {T} The unwrapped value.
  */
 function unwrap(value) {
-    return value instanceof Signal ? value.value : value;
+    return value instanceof signal_Signal ? value.value : value;
 }
 ;
 
-;// ./dist/src/hook.js
-/* unused harmony import specifier */ var hook_Component;
-/* unused harmony import specifier */ var hook_Signal;
+;// ./dist/src/computed.js
 
-
-function hook(root, callback) {
-    for (const child of root.config.children) {
-        if (child instanceof hook_Component) {
-            hook(child, callback);
-            continue;
+class Computed extends signal_Signal {
+    parameters;
+    func;
+    unsubscribeFunctions = [];
+    // private computedValue: T;
+    /*public override get value(): T {
+        return this.computedValue;
+    };*/
+    constructor(parameters, // Spread tuple.
+    func) {
+        super(undefined);
+        this.parameters = parameters;
+        this.func = func;
+        for (const parameter of this.parameters) {
+            const unsubscribe = parameter.subscribe(() => this.compute());
+            this.unsubscribeFunctions.push(unsubscribe);
         }
         ;
-        if (child instanceof hook_Signal) {
-            const unsubscribe = child.subscribe(() => {
-                callback(root, child);
-            });
-            root.lifecycle.addCleanupTask(unsubscribe);
-            continue;
-        }
-        ;
-        // TODO: Figure this out.
-        /*if (child instanceof Array) {
-            for (const item of child) {
-                if (item instanceof Component) {
-                    hook(item, callback);
-                };
-            };
-        };*/
+        this.value = this.compute();
     }
     ;
-    for (const [key, value] of Object.entries(root.config)) {
-        if (key === 'children') {
-            continue;
-        }
-        ;
-        if (value instanceof hook_Signal) {
-            const unsubscribe = value.subscribe(() => {
-                callback(root, value);
-            });
-            root.lifecycle.addCleanupTask(unsubscribe);
-            continue;
-        }
-        ;
+    compute() {
+        // Use a type assertion for the spread for when the compiler complains about the map result not matching the tuple length exactly.
+        const values = this.parameters.map((p) => p.value);
+        const previousValue = this._value;
+        const value = this.func.call(previousValue, ...values);
+        this._value = value;
+        // TODO: Safe call.
+        return this.value = value;
     }
     ;
+}
+;
+/**
+ * Creates a computed signal.
+ *
+ * @param parameters The inputs to the computing function.
+ * @param func The computing function.
+ *
+ * @returns {Computed<T>}
+ */
+function computed(parameters, func) {
+    const computed = new Computed(parameters, func);
+    return computed;
 }
 ;
 
 ;// ./dist/src/index.js
+
 
 
 

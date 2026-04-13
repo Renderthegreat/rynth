@@ -1,6 +1,7 @@
 
 export class Signal<T> {
-	private _value: T;
+	protected _value: T;
+
 	private listeners: Array<(value: T) => void> = new Array();
 
 	public constructor(value: T) {
@@ -44,6 +45,7 @@ export class Signal<T> {
 	public map<O>(func: (value: T) => O): Signal<O> {
 		const signal = new Signal<O>(func(this.value));
 
+		// TODO:
 		const unsubscribe = this.subscribe((value: T) => {
 			signal.value = func(value);
 		});
@@ -66,6 +68,12 @@ export class Signal<T> {
 	};
 };
 
+/**
+ * Creates a new signal.
+ *
+ * @param value The initial value of the {@link Signal}.
+ * @returns {Signal<T>}
+ */
 export function signal<T>(value: T): Signal<T> {
 	return new Signal<T>(value);
 };

@@ -1,7 +1,6 @@
-import { ArrayElement } from 'type-fest';
 export declare class Signal<T> {
     protected _value: T;
-    listeners: Array<(value: T) => void>;
+    private listeners;
     constructor(value: T);
     /**
      * Subscribe to the signal.
@@ -24,15 +23,13 @@ export declare class Signal<T> {
      */
     valueOf(): T;
 }
+/**
+ * Creates a new signal.
+ *
+ * @param value The initial value of the {@link Signal}.
+ * @returns {Signal<T>}
+ */
 export declare function signal<T>(value: T): Signal<T>;
-export declare class Computed<T, Params extends (Signal<any>)[]> extends Signal<Readonly<T>> {
-    protected parameters: Params;
-    protected func: (...args: (Unwrapped<ArrayElement<Params>>)[]) => T;
-    constructor(parameters: Params, func: (...args: (Unwrapped<ArrayElement<Params>>)[]) => T);
-    get value(): T;
-    compute(): T;
-}
-export declare function computed<T, Params extends (Signal<any>)[]>(parameters: Params, func: (...args: (Unwrapped<ArrayElement<Params>>)[]) => T): Signal<T>;
 /**
  * `T` or `Signal<T>`.
  */

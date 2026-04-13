@@ -13,8 +13,6 @@ export class Signal {
      * @returns A function that unsubscribes the listener when called.
      */
     subscribe(listener) {
-        // Debug: log subscription creation (temporary)
-        // console.debug('Signal.subscribe', listener);
         this.listeners.push(listener);
         return () => {
             this.listeners = this.listeners.filter((l) => l !== listener);
@@ -45,6 +43,7 @@ export class Signal {
     ;
     map(func) {
         const signal = new Signal(func(this.value));
+        // TODO:
         const unsubscribe = this.subscribe((value) => {
             signal.value = func(value);
         });
@@ -67,39 +66,14 @@ export class Signal {
     ;
 }
 ;
+/**
+ * Creates a new signal.
+ *
+ * @param value The initial value of the {@link Signal}.
+ * @returns {Signal<T>}
+ */
 export function signal(value) {
     return new Signal(value);
-}
-;
-export class Computed extends Signal {
-    parameters;
-    func;
-    constructor(parameters, func) {
-        super(undefined);
-        this.parameters = parameters;
-        this.func = func;
-        super.value = this.compute();
-    }
-    ;
-    get value() {
-        return this.compute();
-    }
-    ;
-    compute() {
-        return super.value = this.func(...this.parameters.map((param) => param.value));
-    }
-    ;
-}
-;
-export function computed(parameters, func) {
-    const getParameterValues = () => parameters.map((param) => param.value);
-    const signal = new Signal(func(...getParameterValues()));
-    const unsubscribes = parameters.map((param) => {
-        return param.subscribe(() => {
-            signal.value = func(...getParameterValues());
-        });
-    });
-    return signal;
 }
 ;
 /**
