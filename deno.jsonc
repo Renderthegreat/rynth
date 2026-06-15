@@ -1,0 +1,32 @@
+{
+	"name": "@rynth/rynth",
+	"version": "0.0.0",
+
+	"compilerOptions": {
+	},
+
+	"imports": {
+		// Internal path aliases.
+		"#~/": "./src/",
+		"#tests/": "./tests/",
+
+		// Dependencies.
+		"iron-enum": "npm:iron-enum@latest",
+		"type-fest": "npm:type-fest@latest",
+		"eventemitter3": "npm:eventemitter3@latest",
+
+		// Dev Dependencies.
+		"html-inline-script-webpack-plugin": "npm:html-inline-script-webpack-plugin@latest",
+		"html-webpack-plugin": "npm:html-webpack-plugin@latest",
+		// "typescript": "npm:typescript@latest",
+		"webpack-cli": "npm:webpack-cli@latest",
+		
+	},
+	"exports": {
+		".": "./src/index.ts",
+	},
+
+	"tasks": {
+		"build": "bash scripts/build.sh",
+	},
+}

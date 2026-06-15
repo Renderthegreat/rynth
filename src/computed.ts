@@ -1,6 +1,6 @@
-import { Signal, Unwrapped, } from '#~/signal';
+import { Signal, type Unwrapped, } from '#~/signal.ts';
 
-import { ArrayElement, } from 'type-fest';
+import type { ArrayElement, } from 'type-fest';
 
 type FunctionParams<Params extends (Signal<any>)[]> = {
 	[K in keyof Params]: Unwrapped<Params[K]>;
@@ -50,7 +50,7 @@ export class Computed<T, Params extends (Signal<any>)[]> extends Signal<Readonly
  * @param parameters The inputs to the computing function.
  * @param func The computing function.
  * 
- * @returns {Computed<T>}
+ * @returns {Computed<T>}.
  */
 export function computed<T, Params extends (Signal<any>)[]>(parameters: [...Params], func: (this: Readonly<T> | undefined, ...args: FunctionParams<Params>) => T): Computed<T, Params> {
 	const computed = new Computed(parameters, func);

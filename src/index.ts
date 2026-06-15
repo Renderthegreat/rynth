@@ -1,5 +1,5 @@
-export * from '#~/component';
-export * from '#~/hook';
+export * from '#~/component.ts';
+export * from '#~/hook.ts';
 
-export * from '#~/signal';
-export * from '#~/computed';
+export * from '#~/signal.ts';
+export * from '#~/computed.ts';

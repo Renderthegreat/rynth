@@ -1,7 +1,6 @@
-import { Component, ComponentFactory, Child, ComponentConfig } from '#~/component';
-import { Class } from 'type-fest';
+import { Component, type ComponentFactory, type Child, type ComponentConfig } from '#~/component.ts';
+import type { Class } from 'type-fest';
 export declare class FragmentFactory<C = any> implements ComponentFactory<C> {
-    readonly symbol: symbol;
     of(config: ComponentConfig<C>): Component<C>;
 }
 /**

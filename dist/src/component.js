@@ -1,12 +1,12 @@
-import { Lifecycle, } from '#~/lifecycle';
+import { Lifecycle, } from '#~/lifecycle.ts';
+// TODO: Use `Signal` types.
 export class Component {
-    type;
     config;
-    key = Symbol();
+    key;
     lifecycle = new Lifecycle({});
-    constructor(type, config) {
-        this.type = type;
+    constructor(config, key = Symbol()) {
         this.config = config;
+        this.key = key;
         // Bind disposal so `this` is preserved and disposal doesn't get called with an incorrect context.
         this.lifecycle.on('unmount', () => this.dispose());
     }

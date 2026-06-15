@@ -1,21 +1,20 @@
-import { Signal, } from '#~/signal';
-import { Lifecycle, } from '#~/lifecycle';
+import type { Signal, } from '#~/signal.ts';
+import { Lifecycle, } from '#~/lifecycle.ts';
 
 // We can't enforce types on this. :(
 export type ComponentConfig<T> = T & {
 	children: Child[],
 };
 
+// TODO: Use `Signal` types.
 export class Component<C = unknown> {
-	public readonly key: symbol = Symbol();
-
 	public readonly lifecycle: Lifecycle = new Lifecycle({
 		
 	});
 
 	public constructor(
-		public readonly type: symbol,
 		public readonly config: ComponentConfig<C>,
+		public readonly key: symbol = Symbol(),
 	) {
 		// Bind disposal so `this` is preserved and disposal doesn't get called with an incorrect context.
 		this.lifecycle.on('unmount', () => this.dispose());
@@ -40,7 +39,7 @@ export class Component<C = unknown> {
 export type Child<C = any> = (Component<C> | Signal<any> | string) | null;
 
 export interface ComponentFactory<C> {
-	readonly symbol: symbol;
+	readonly symbol?: symbol;
 	
 	of(config: ComponentConfig<C>): Component<C>;
 };

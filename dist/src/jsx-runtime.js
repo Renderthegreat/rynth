@@ -1,8 +1,7 @@
-import { Component, } from '#~/component';
+import { Component, } from '#~/component.ts';
 export class FragmentFactory {
-    symbol = Symbol('');
     of(config) {
-        return new Component(this.symbol, config);
+        return new Component(config);
     }
     ;
 }

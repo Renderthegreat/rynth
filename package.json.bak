@@ -13,8 +13,8 @@
 		"./jsx-runtime": "./dist/src/jsx-runtime.js"
 	},
 	"imports": {
-		"#~/*": "./dist/src/*.js",
-		"#tests/*": "./dist/tests/*.js"
+		"#~/": "./src",
+		"#tests/": "./tests/"
 	},
 	"scripts": {
 		"test": "./scripts/test.sh",

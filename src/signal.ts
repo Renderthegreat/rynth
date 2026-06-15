@@ -1,8 +1,10 @@
-
+/**
+ * TODO: Document.
+ */
 export class Signal<T> {
 	protected _value: T;
 
-	private listeners: Array<(value: T) => void> = new Array();
+	private listeners: Set<(value: T) => void> = new Set();
 
 	public constructor(value: T) {
 		this._value = value;
@@ -17,10 +19,10 @@ export class Signal<T> {
 	 * @returns A function that unsubscribes the listener when called.
 	 */
 	public subscribe(listener: (value: T) => void): () => void {
-		this.listeners.push(listener);
+		this.listeners.add(listener);
 
 		return () => {
-			this.listeners = this.listeners.filter((l) => l !== listener);
+			this.listeners.delete(listener);
 		};
 	};
 
@@ -45,7 +47,7 @@ export class Signal<T> {
 	public map<O>(func: (value: T) => O): Signal<O> {
 		const signal = new Signal<O>(func(this.value));
 
-		// TODO:
+		// TODO: Fix memory leak.
 		const unsubscribe = this.subscribe((value: T) => {
 			signal.value = func(value);
 		});
@@ -72,7 +74,7 @@ export class Signal<T> {
  * Creates a new signal.
  *
  * @param value The initial value of the {@link Signal}.
- * @returns {Signal<T>}
+ * @returns {Signal<T>}.
  */
 export function signal<T>(value: T): Signal<T> {
 	return new Signal<T>(value);

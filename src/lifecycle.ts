@@ -46,7 +46,7 @@ export class Lifecycle extends EventEmitter<LifecycleEvent> {
 	};
 
 	public override emit(event: LifecycleEvent, ...args: any): boolean {
-		if (this.paused) {	
+		if (this.paused) {
 			this.resumé.push([event, ...args]);
 		} else {
 			this.methods[event]?.();

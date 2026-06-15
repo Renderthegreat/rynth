@@ -1,4 +1,4 @@
-import { Signal, } from '#~/signal';
+import { Signal, } from '#~/signal.ts';
 export class Computed extends Signal {
     parameters;
     func;
@@ -38,7 +38,7 @@ export class Computed extends Signal {
  * @param parameters The inputs to the computing function.
  * @param func The computing function.
  *
- * @returns {Computed<T>}
+ * @returns {Computed<T>}.
  */
 export function computed(parameters, func) {
     const computed = new Computed(parameters, func);

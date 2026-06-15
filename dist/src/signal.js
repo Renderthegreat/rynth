@@ -1,6 +1,9 @@
+/**
+ * TODO: Document.
+ */
 export class Signal {
     _value;
-    listeners = new Array();
+    listeners = new Set();
     constructor(value) {
         this._value = value;
     }
@@ -13,9 +16,9 @@ export class Signal {
      * @returns A function that unsubscribes the listener when called.
      */
     subscribe(listener) {
-        this.listeners.push(listener);
+        this.listeners.add(listener);
         return () => {
-            this.listeners = this.listeners.filter((l) => l !== listener);
+            this.listeners.delete(listener);
         };
     }
     ;
@@ -43,7 +46,7 @@ export class Signal {
     ;
     map(func) {
         const signal = new Signal(func(this.value));
-        // TODO:
+        // TODO: Fix memory leak.
         const unsubscribe = this.subscribe((value) => {
             signal.value = func(value);
         });
@@ -70,7 +73,7 @@ export class Signal {
  * Creates a new signal.
  *
  * @param value The initial value of the {@link Signal}.
- * @returns {Signal<T>}
+ * @returns {Signal<T>}.
  */
 export function signal(value) {
     return new Signal(value);

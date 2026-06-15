@@ -1,12 +1,10 @@
-import { Component, ComponentFactory, Child, ComponentConfig, } from '#~/component';
+import { Component, type ComponentFactory, type Child, type ComponentConfig, } from '#~/component.ts';
 
-import { Class, } from 'type-fest';
+import type { Class, } from 'type-fest';
 
 export class FragmentFactory<C = any> implements ComponentFactory<C> {
-	public readonly symbol = Symbol('');
-
 	public of(config: ComponentConfig<C>): Component<C> {
-		return new Component(this.symbol, config);
+		return new Component(config);
 	};
 };
 

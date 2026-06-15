@@ -1,3 +1,6 @@
+/**
+ * TODO: Document.
+ */
 export declare class Signal<T> {
     protected _value: T;
     private listeners;
@@ -27,7 +30,7 @@ export declare class Signal<T> {
  * Creates a new signal.
  *
  * @param value The initial value of the {@link Signal}.
- * @returns {Signal<T>}
+ * @returns {Signal<T>}.
  */
 export declare function signal<T>(value: T): Signal<T>;
 /**

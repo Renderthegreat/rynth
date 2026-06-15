@@ -1,14 +1,13 @@
-import { Signal } from '#~/signal';
-import { Lifecycle } from '#~/lifecycle';
+import type { Signal } from '#~/signal.ts';
+import { Lifecycle } from '#~/lifecycle.ts';
 export type ComponentConfig<T> = T & {
     children: Child[];
 };
 export declare class Component<C = unknown> {
-    readonly type: symbol;
     readonly config: ComponentConfig<C>;
     readonly key: symbol;
     readonly lifecycle: Lifecycle;
-    constructor(type: symbol, config: ComponentConfig<C>);
+    constructor(config: ComponentConfig<C>, key?: symbol);
     /**
      * Disposes of the {@link Component}, and all of its children.
      */
@@ -16,6 +15,6 @@ export declare class Component<C = unknown> {
 }
 export type Child<C = any> = (Component<C> | Signal<any> | string) | null;
 export interface ComponentFactory<C> {
-    readonly symbol: symbol;
+    readonly symbol?: symbol;
     of(config: ComponentConfig<C>): Component<C>;
 }

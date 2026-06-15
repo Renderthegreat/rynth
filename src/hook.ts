@@ -1,5 +1,5 @@
-import { Component, } from '#~/component';
-import { Signal, } from '#~/signal';
+import { Component, } from '#~/component.ts';
+import { Signal, } from '#~/signal.ts';
 
 export function hook(root: Component, callback: (component: Component, signal?: Signal<unknown>) => void): void {
 	for (const child of root.config.children) {
