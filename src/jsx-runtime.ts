@@ -1,57 +1,98 @@
-import { Component, type ComponentFactory, type Child, type ComponentConfig, } from '#~/component.ts';
-
-import type { Class, } from 'type-fest';
-
-export class FragmentFactory<C = any> implements ComponentFactory<C> {
-	public of(config: ComponentConfig<C>): Component<C> {
-		return new Component(config);
-	};
-};
+// deno-lint-ignore-file no-namespace
+import { Component, compose, cf, type ComponentFactory, type Child } from '#~/component.ts';
+import { Signal } from '#~/signal.ts';
 
 /**
- * Don't use this type, it's only for the JSX compiler.
+ * Don't use this type directly, it's only for the JSX compiler.
  */
-export class Fragment extends FragmentFactory { };
+export const Fragment: ComponentFactory<{}, Child[]> = cf({
+	[compose](config: {}, children: Child[]) {
+		return new Component(config, children, Symbol());
+	},
+});
 
-export function jsx<C>(type: Class<ComponentFactory<C>>, config: Omit<ComponentConfig<C>, 'children'> & { children: Child | Array<Child> }): Component<C> {
-	const children: Array<Child> = (config.children instanceof Array ? config.children : [config.children])!;
+/**
+ * Normalizes mixed inputs (primitives, signals, nested arrays) into a flat tree of valid children.
+ * Primitive values are kept as-is so they can later be rendered by the DOM renderer.
+ */
+function normalizeChildren(childrenRaw: unknown): Child[] {
+	if (childrenRaw === undefined || childrenRaw === null) {
+		return [];
+	};
 
-	return (new type()).of({
-		...(config as ComponentConfig<C>),
-		children: children,
-	});
-};
+	const normalized: Child[] = [];
+	const rawArray = Array.isArray(childrenRaw) ? childrenRaw : [childrenRaw];
 
-export function jsxs<C>(type: Class<ComponentFactory<C>>, config: ComponentConfig<C>): Component<C> {
-	let children: Array<Component> = [];
-
-	for (const child of config.children) {
-		if (child instanceof Component) {
-			children.push(child);
-
+	for (const child of rawArray) {
+		if (child === undefined || child === null) {
 			continue;
 		};
 
-		children.push(jsx(FragmentFactory, { children: [child], }));
+		if (child instanceof Component || child instanceof Signal) {
+			normalized.push(child as Child);
+			continue;
+		};
+
+		if (Array.isArray(child)) {
+			normalized.push(...normalizeChildren(child));
+			continue;
+		};
+
+		// Keep primitive values in their original scalar form; the renderer downstream stringifies them.
+		normalized.push(child as Child);
 	};
 
-	return (new type()).of({
-		...config,
-		children: children,
-	});
+	return normalized;
 };
+
+/**
+ * Catches <A b="c"/> and maps it to factory[compose]({ b: "c" }, children).
+ */
+export function jsx<T, C extends Child[]>(
+	factory: ComponentFactory<T, C>,
+	props: T & { children?: C | C[number] | unknown }
+): Component<T, C> {
+	const { children: childrenBad, ...config } = props as T & { children?: unknown };
+	const children = normalizeChildren(childrenBad) as C;
+
+	return <Component<T, C>> factory[compose](
+		config as T,
+		children,
+	);
+};
+
+/**
+ * Catches <A b="c">...</A> with multiple static children and bundles properties into config
+ */
+export function jsxs<T, C extends Child[]>(
+	factory: ComponentFactory<T, C>,
+	props: T & { children: C | C[number] | unknown }
+): Component<T, C> {
+	const { children: childrenBad, ...config } = props as T & { children?: unknown };
+	const children = normalizeChildren(childrenBad) as C;
+
+	return <Component<T, C>> factory[compose](
+		config as T,
+		children,
+	);
+}
 
 export namespace JSX {
 	export type Element = Component;
 
-	/*export interface IntrinsicElements {
-		// [key: string]: any;
-	};*/
+	// export type ElementClass = ComponentFactory<any, any>;
 
-	export type LibraryManagedAttributes<ComponentType, Props> = // ? `Props` is required, but it isn't used here.
-		ComponentType extends Class<ComponentFactory<infer P>>
-		? P & { children?: Child | Array<Child>; }
-		: never
-	;
-};
+	/**
+	 * Explicitly tells the *TypeScript* compiler what types are permitted to be used as a `JSX` element tag name.
+	 */
+	export type ElementType = ComponentFactory;
 
+	/**
+	 * Maps your factory's config type (T) into flat JSX attributes in the source code.
+	 * E.g. If T is { b: string }, then <A b="c" /> is expected and validated.
+	 */
+	export type LibraryManagedAttributes<ComponentType, Props> =
+		ComponentType extends ComponentFactory<infer T, infer C>
+			? T & { children?: C | C[number] | unknown }
+			: never;
+}

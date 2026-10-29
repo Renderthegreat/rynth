@@ -2,13 +2,14 @@ import { EventEmitter, } from 'eventemitter3';
 
 export type LifecycleEvent =
 	| 'mount'
+	| 'unmount'
+
 //	| 'update'
 
 	| 'pause'
 	| 'resume'
 
-	| 'unmount'
-	| 'dispose'
+	//| 'dispose'
 ;
 
 export type LifecycleMethods = {
@@ -46,6 +47,8 @@ export class Lifecycle extends EventEmitter<LifecycleEvent> {
 	};
 
 	public override emit(event: LifecycleEvent, ...args: any): boolean {
+		// console.log(event, ...args);
+
 		if (this.paused) {
 			this.resumé.push([event, ...args]);
 		} else {

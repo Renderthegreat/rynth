@@ -1,3 +1,5 @@
+// deno-lint-ignore-file adjacent-overload-signatures
+
 /**
  * TODO: Document.
  */
@@ -5,6 +7,9 @@ export class Signal<T> {
 	protected _value: T;
 
 	private listeners: Set<(value: T) => void> = new Set();
+	private unsubscriptions: Set<() => void> = new Set();
+
+	private destroyed = false;
 
 	public constructor(value: T) {
 		this._value = value;
@@ -21,9 +26,13 @@ export class Signal<T> {
 	public subscribe(listener: (value: T) => void): () => void {
 		this.listeners.add(listener);
 
-		return () => {
+		const unsubscribe = () => {
 			this.listeners.delete(listener);
 		};
+
+		this.unsubscriptions.add(unsubscribe);
+
+		return unsubscribe;
 	};
 
 	protected notify(): void {
@@ -45,14 +54,40 @@ export class Signal<T> {
 	};
 
 	public map<O>(func: (value: T) => O): Signal<O> {
+		if (this.destroyed) {
+			// TODO: Make a special error type like in `notify`.
+		};
+
 		const signal = new Signal<O>(func(this.value));
 
-		// TODO: Fix memory leak.
 		const unsubscribe = this.subscribe((value: T) => {
 			signal.value = func(value);
 		});
 
+		this.unsubscriptions.add(unsubscribe);
+		this.unsubscriptions.add(() => {
+			// Destroy the mapped signal since it can't recieve updates.
+			signal.destroy();
+		});
+
 		return signal;
+	};
+
+	/**
+	 * Destroys the signal and all subscriptions.
+	 */
+	public destroy(): void {
+		console.log("Destroying!!!");
+
+		if (this.destroyed) {
+			// TODO: Make a special error type like in `notify`.
+		};
+
+		for (const unsubscribe of this.unsubscriptions) {
+			unsubscribe();
+		};
+
+		this.destroyed = true;
 	};
 
 	public toString(): string {
@@ -77,7 +112,9 @@ export class Signal<T> {
  * @returns {Signal<T>}.
  */
 export function signal<T>(value: T): Signal<T> {
-	return new Signal<T>(value);
+	const signal = new Signal<T>(value);
+
+	return signal;
 };
 
 /**
